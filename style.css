@@ -1,0 +1,158 @@
+/* ============================
+   STILI GLOBALI
+============================= */
+
+body {
+    margin: 0;
+    padding-bottom: 90px; /* spazio per navbar */
+    font-family: 'Inter','Segoe UI',sans-serif;
+    background: #eef4ff;
+    color: #2b3a55;
+}
+
+.page {
+    display: none;
+    padding: 18px;
+}
+
+.page.visible {
+    display: block;
+}
+
+/* ============================
+   CARD MODERNE
+============================= */
+
+.card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    margin-bottom: 20px;
+}
+
+/* ============================
+   TITOLI E TESTI
+============================= */
+
+.titolo {
+    margin-top: 0;
+    text-align: center;
+    color: #0a71d0;
+    font-size: 1.4em;
+    font-weight: 700;
+}
+
+label {
+    font-weight: 600;
+    color: #2b3a55;
+}
+
+/* ============================
+   INPUT E SELECT
+============================= */
+
+input, select {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #ccd3da;
+    margin-top: 6px;
+    font-size: 1em;
+    background: #f9fbff;
+    box-sizing: border-box;
+    outline: none;
+}
+
+/* ============================
+   BOTTONI
+============================= */
+
+.btn-primary {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    background: #0a71d0;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-top: 20px;
+    box-shadow: 0 4px 14px rgba(10,113,208,0.4);
+}
+
+/* ============================
+   NAVBAR INFERIORE
+============================= */
+
+.navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid #d6d6d6;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.10);
+}
+
+.nav-item {
+    text-align: center;
+    font-size: 0.8em;
+    color: #0a71d0;
+}
+
+.nav-item .material-icons-round {
+    font-size: 26px;
+    display: block;
+}
+
+/* ============================
+   STORICO PRESENZE
+============================= */
+
+.card-presenza {
+    background: #f4f7ff;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card-presenza span {
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* ============================
+   TOAST NOTIFICA
+============================= */
+
+#toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0a71d0;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 12px;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* ============================
+   ERRORI
+============================= */
+
+.errore {
+    background: #e63946;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    border-radius: 10px;
+    margin-top: 12px;
+    display: none;
+}
