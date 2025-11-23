@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DEANGELISBUS – Presenze</title>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#0a71d0">
+</head>
+
+<body>
+
+<!-- ============================
+       LOGIN PAGE
+============================= -->
+<div id="page-login" class="page visible">
+
+    <div class="card">
+        <h2 class="titolo">Accesso Autisti</h2>
+
+        <div class="form-group">
+            <label>Nome Autista</label>
+            <input type="text" id="loginNome" placeholder="Inserisci nome completo">
+        </div>
+
+        <div class="form-group">
+            <label>PIN</label>
+            <input type="password" id="loginPin" maxlength="4" placeholder="PIN a 4 cifre">
+        </div>
+
+        <button class="btn-primary" onclick="login()">Accedi</button>
+
+        <div id="loginErrore" class="errore"></div>
+    </div>
+</div>
+
+
+
+<!-- ============================
+       HOME PAGE
+============================= -->
+<div id="page-home" class="page">
+
+    <div class="card">
+        <h2 id="welcomeText">Benvenuto</h2>
+        <p>Scegli una funzione dal menu in basso.</p>
+    </div>
+
+</div>
+
+
+
+<!-- ============================
+    INSERISCI PRESENZA
+============================= -->
+<div id="page-presenza" class="page">
+
+    <div class="card">
+        <h2 class="titolo">Inserisci Presenza</h2>
+
+        <div class="form-group">
+            <label>Data</label>
+            <input type="date" id="dataPresenza">
+        </div>
+
+        <div class="form-group">
+            <label>Tipo</label>
+            <select id="tipoPresenza" onchange="cambiaTipo()">
+                <option value="Nessuno">-- Nessuno --</option>
+                <option value="Turno">Turno</option>
+                <option value="Noleggio">Noleggio</option>
+                <option value="Riposo">Riposo</option>
+                <option value="Festivo">Festivo</option>
+                <option value="Infortunio">Infortunio</option>
+                <option value="Malattia">Malattia</option>
+                <option value="Assente">Assente</option>
+                <option value="Ferie">Ferie</option>
+                <option value="Permesso">Permesso</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="bloccoTurni" style="display:none;">
+            <label>Turno</label>
+            <select id="turnoElenco"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Descrizione</label>
+            <input type="text" id="descrizionePresenza" placeholder="Inserisci descrizione">
+        </div>
+
+        <div class="form-group">
+            <label>Ora Inizio</label>
+            <input type="time" id="oraInizio">
+        </div>
+
+        <div class="form-group">
+            <label>Ora Fine</label>
+            <input type="time" id="oraFine">
+        </div>
+
+        <button class="btn-primary" onclick="salvaPresenza()">Invia Presenza</button>
+
+    </div>
+</div>
+
+
+
+<!-- ============================
+          STORICO
+============================= -->
+<div id="page-storico" class="page">
+
+    <div class="card">
+        <h2 class="titolo">Storico Presenze</h2>
+        <div id="listaStorico"></div>
+    </div>
+</div>
+
+
+
+<!-- ============================
+    BOTTOM NAV BAR
+============================= -->
+<div class="navbar">
+    <div class="nav-item" onclick="showPage('page-home')">
+        <span class="material-icons-round">home</span>
+        Home
+    </div>
+
+    <div class="nav-item" onclick="showPage('page-presenza')">
+        <span class="material-icons-round">edit_calendar</span>
+        Presenza
+    </div>
+
+    <div class="nav-item" onclick="showPage('page-storico'); caricaStorico();">
+        <span class="material-icons-round">list_alt</span>
+        Storico
+    </div>
+
+    <div class="nav-item" onclick="logout()">
+        <span class="material-icons-round">logout</span>
+        Esci
+    </div>
+</div>
+
+
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
