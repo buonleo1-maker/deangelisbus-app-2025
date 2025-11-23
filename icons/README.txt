@@ -1,1 +1,2 @@
 Questa cartella contiene le icone della PWA.
+A_digital_vector_graphic_features_a_white_bus_icon.png
