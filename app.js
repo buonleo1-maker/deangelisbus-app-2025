@@ -157,23 +157,28 @@ async function salvaPresenza(){
 
         let res = await fetch(API, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
             body: JSON.stringify(payload)
         });
 
-        let json = await res.json();
+        let text = await res.text();  
+        console.log("RISPOSTA RAW:", text);
+
+        let json = JSON.parse(text);
 
         if(json.status === "OK"){
             toast("Presenza salvata correttamente");
         } else {
-            toast("Errore salvataggio");
+            toast("Errore salvataggio: " + json.message);
         }
 
     }catch(e){
+        console.log(e);
         toast("Errore di rete");
     }
 }
-
 
 // ---------------------------------------------------------------
 // CARICA STORICO PRESENZE
