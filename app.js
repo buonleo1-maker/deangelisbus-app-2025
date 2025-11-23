@@ -1,218 +1,220 @@
-/* ============================================
-   CONFIG
-============================================ */
+/********************************************************************
+ * DEANGELISBUS – APP.JS AVANZATO 2025
+ * Compatibile con backend Apps Script + UI moderna
+ ********************************************************************/
+
+// ---------------------------------------------------------------
+// CONFIGURAZIONE API
+// ---------------------------------------------------------------
 const API = "https://script.google.com/macros/s/AKfycbwDU8A5i08hKEC9ktw2r1tAy5LHOidirQZAjWA_cvnr21DC2DZvQ-Fk6tJXPHc8oY5v/exec";
 
+// ---------------------------------------------------------------
+// VARIABILI GLOBALI
+// ---------------------------------------------------------------
+let AUTISTA_LOGGATO = "";
 
-/* ============================================
-   FUNZIONE TOAST (NOTIFICA)
-============================================ */
+
+// ---------------------------------------------------------------
+// FUNZIONE TOAST (messaggi)
+// ---------------------------------------------------------------
 function toast(msg){
     const t = document.getElementById("toast");
     t.innerText = msg;
-    t.style.display = "block";
-    setTimeout(() => t.style.display = "none", 2500);
+    t.classList.add("show");
+    setTimeout(()=> t.classList.remove("show"), 3000);
 }
 
 
-/* ============================================
-   CAMBIO PAGINA
-============================================ */
+// ---------------------------------------------------------------
+// CAMBIA PAGINA
+// ---------------------------------------------------------------
 function showPage(id){
     document.querySelectorAll(".page").forEach(p => p.classList.remove("visible"));
     document.getElementById(id).classList.add("visible");
 }
 
 
-/* ============================================
-   LOGIN
-============================================ */
+// ---------------------------------------------------------------
+// LOGIN
+// ---------------------------------------------------------------
 async function login(){
     let nome = document.getElementById("loginNome").value.trim();
     let pin  = document.getElementById("loginPin").value.trim();
 
-    if(!nome || !pin){
-        errore("loginErrore", "Inserisci nome e PIN");
+    if(nome === "" || pin === ""){
+        document.getElementById("loginErrore").innerText = "Inserisci nome e PIN.";
         return;
     }
 
-    let res = await fetch(`${API}?action=checkPin&nome=${encodeURIComponent(nome)}&pin=${pin}`);
-    let out = await res.json();
+    try{
+        let url = `${API}?action=checkPin&nome=${encodeURIComponent(nome)}&pin=${encodeURIComponent(pin)}`;
+        let res = await fetch(url);
+        let json = await res.json();
 
-    if(out.status === "OK"){
-        sessionStorage.setItem("autista", nome);
-        document.getElementById("welcomeText").innerText = "Benvenuto, " + nome;
-        showPage("page-home");
-    } else {
-        errore("loginErrore", "PIN errato");
+        if(json.status === "OK" && json.data === true){
+            AUTISTA_LOGGATO = nome;
+            document.getElementById("welcomeText").innerText = "Benvenuto " + nome;
+            document.getElementById("loginErrore").innerText = "";
+            showPage("page-home");
+        }else{
+            document.getElementById("loginErrore").innerText = "Credenziali errate.";
+        }
+
+    }catch(e){
+        document.getElementById("loginErrore").innerText = "Errore di connessione.";
     }
 }
 
-function errore(id, msg){
-    let el = document.getElementById(id);
-    el.innerText = msg;
-    el.style.display = "block";
-    setTimeout(() => el.style.display = "none", 2500);
-}
 
-
-/* ============================================
-   LOGOUT
-============================================ */
+// ---------------------------------------------------------------
+// LOGOUT
+// ---------------------------------------------------------------
 function logout(){
-    sessionStorage.clear();
+    AUTISTA_LOGGATO = "";
     showPage("page-login");
+    document.getElementById("loginNome").value = "";
+    document.getElementById("loginPin").value = "";
 }
 
 
-/* ============================================
-   CAMBIO TIPO PRESENZA
-============================================ */
-function cambiaTipo(){
+// ---------------------------------------------------------------
+// CAMBIO TIPO PRESENZA
+// ---------------------------------------------------------------
+async function cambiaTipo(){
     const tipo = document.getElementById("tipoPresenza").value;
-    const desc = document.getElementById("descrizionePresenza");
     const bloccoTurni = document.getElementById("bloccoTurni");
-
-    // Nascondo turno di default
-    bloccoTurni.style.display = "none";
-
-    // Tipi con descrizione automatica
-    const auto = {
-        Riposo: "Riposo",
-        Festivo: "Festivo",
-        Infortunio: "Infortunio",
-        Malattia: "Malattia",
-        Assente: "Assente",
-        Ferie: "Ferie",
-        Permesso: "Permesso"
-    };
-
-    if(auto[tipo]){
-        desc.value = auto[tipo];
-        return;
-    }
+    const desc = document.getElementById("descrizionePresenza");
 
     if(tipo === "Turno"){
-        desc.value = "";
         bloccoTurni.style.display = "block";
+        desc.value = "";
         caricaTurni();
-        return;
+    } else {
+        bloccoTurni.style.display = "none";
     }
-
-    // Noleggio / Nessuno
-    desc.value = "";
 }
 
 
-/* ============================================
-   CARICA ELENCO TURNI DAL BACKEND
-============================================ */
+// ---------------------------------------------------------------
+// CARICA TURNI
+// ---------------------------------------------------------------
 async function caricaTurni(){
-    let sel = document.getElementById("turnoElenco");
-    sel.innerHTML = "";
+
     try{
-        let res = await fetch(`${API}?action=getTurni`);
-        let out = await res.json();
-        if(out.status === "OK"){
-            out.data.forEach(t => {
+        let url = `${API}?action=getTurni`;
+        let res = await fetch(url);
+        let json = await res.json();
+
+        const select = document.getElementById("turnoElenco");
+        select.innerHTML = "";
+
+        if(json.status === "OK"){
+            json.data.forEach(t => {
                 let opt = document.createElement("option");
                 opt.value = t;
                 opt.innerText = t;
-                sel.appendChild(opt);
+                select.appendChild(opt);
             });
         }
+
     }catch(e){
-        console.error(e);
+        toast("Errore caricamento turni");
     }
 }
 
 
-/* ============================================
-   SALVATAGGIO PRESENZA
-============================================ */
+// ---------------------------------------------------------------
+// SALVA PRESENZA (POST)
+// ---------------------------------------------------------------
 async function salvaPresenza(){
-    const nome = sessionStorage.getItem("autista");
-    if(!nome){
-        toast("Sessione scaduta");
-        showPage("page-login");
-        return;
+
+    let data = document.getElementById("dataPresenza").value;
+    let tipo = document.getElementById("tipoPresenza").value;
+    let desc = document.getElementById("descrizionePresenza").value;
+    let o1   = document.getElementById("oraInizio").value;
+    let o2   = document.getElementById("oraFine").value;
+
+    if(tipo === "Turno"){
+        desc = document.getElementById("turnoElenco").value;
     }
 
-    const dataP = document.getElementById("dataPresenza").value;
-    const tipo  = document.getElementById("tipoPresenza").value;
-    const desc  = document.getElementById("descrizionePresenza").value;
-    const o1    = document.getElementById("oraInizio").value;
-    const o2    = document.getElementById("oraFine").value;
-
-    if(!dataP){
-        toast("Seleziona una data");
+    if(data === "" || tipo === ""){
+        toast("Compila data e tipo");
         return;
     }
 
     const payload = {
         action: "addPresenza",
-        nome: nome,
-        data: dataP,
+        nome: AUTISTA_LOGGATO,
+        data: data,
         tipo: tipo,
         desc: desc,
         o1: o1,
         o2: o2
     };
 
-    let res = await fetch(API, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(payload)
-    });
+    try {
 
-    toast("Presenza salvata");
-}
+        let res = await fetch(API, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
 
+        let json = await res.json();
 
-/* ============================================
-   CARICA STORICO
-============================================ */
-async function caricaStorico(){
-    const nome = sessionStorage.getItem("autista");
-    let box = document.getElementById("listaStorico");
-    box.innerHTML = "";
+        if(json.status === "OK"){
+            toast("Presenza salvata correttamente");
+        } else {
+            toast("Errore salvataggio");
+        }
 
-    let res = await fetch(`${API}?action=getPresenzeAutista&nome=${encodeURIComponent(nome)}`);
-    let out = await res.json();
-
-    if(out.status !== "OK") return;
-
-    out.data.forEach(p => {
-        let div = document.createElement("div");
-        div.className = "card-presenza";
-
-        div.innerHTML = `
-            <span><b>${p.data}</b></span>
-            <span>${p.desc}</span>
-            <span>${p.o1 || ""} → ${p.o2 || ""}</span>
-
-            <button onclick="eliminaPresenza('${p.id}')"
-                class="btn-primary" style="margin-top:10px;background:#d9534f;">
-                Elimina
-            </button>
-        `;
-
-        box.appendChild(div);
-    });
-}
-
-
-/* ============================================
-   ELIMINAZIONE PRESENZA
-============================================ */
-async function eliminaPresenza(id){
-    if(!confirm("Eliminare questa presenza?")) return;
-
-    let res = await fetch(`${API}?action=deletePresenza&id=${id}`);
-    let out = await res.json();
-
-    if(out.status === "OK"){
-        toast("Eliminata");
-        caricaStorico();
+    }catch(e){
+        toast("Errore di rete");
     }
 }
+
+
+// ---------------------------------------------------------------
+// CARICA STORICO PRESENZE
+// ---------------------------------------------------------------
+async function caricaStorico(){
+
+    let container = document.getElementById("listaStorico");
+    container.innerHTML = "";
+
+    try{
+        let url = `${API}?action=getPresenzeAutista&nome=${encodeURIComponent(AUTISTA_LOGGATO)}`;
+        let res = await fetch(url);
+        let json = await res.json();
+
+        if(json.status === "OK"){
+
+            if(json.data.length === 0){
+                container.innerHTML = "<p>Nessuna presenza registrata.</p>";
+                return;
+            }
+
+            json.data.forEach(p => {
+
+                let div = document.createElement("div");
+                div.className = "storico-card";
+
+                div.innerHTML = `
+                    <div><b>Data:</b> ${p.data}</div>
+                    <div><b>Tipo:</b> ${p.tipo}</div>
+                    <div><b>Descrizione:</b> ${p.desc}</div>
+                    <div><b>Inizio:</b> ${p.o1}</div>
+                    <div><b>Fine:</b> ${p.o2}</div>
+                `;
+
+                container.appendChild(div);
+            });
+
+        }
+
+    }catch(e){
+        container.innerHTML = "<p>Errore caricamento storico.</p>";
+    }
+}
+
