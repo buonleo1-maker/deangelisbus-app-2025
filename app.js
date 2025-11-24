@@ -112,7 +112,7 @@ async function caricaTurni(){
 // ======================
 // SALVA PRESENZA (POST)
 // ======================
-async function salvaPresenza(){
+async function salvaPresenza() {
 
     let data = document.getElementById("dataPresenza").value;
     let tipo = document.getElementById("tipoPresenza").value;
@@ -120,11 +120,11 @@ async function salvaPresenza(){
     let o1   = document.getElementById("oraInizio").value;
     let o2   = document.getElementById("oraFine").value;
 
-    if(tipo === "Turno"){
+    if (tipo === "Turno") {
         desc = document.getElementById("turnoElenco").value;
     }
 
-    if(data === "" || tipo === ""){
+    if (data === "" || tipo === "") {
         toast("Compila data e tipo");
         return;
     }
@@ -139,27 +139,26 @@ async function salvaPresenza(){
         o2: o2
     };
 
-    try{
-        // IMPORTANTE: no-cors + text/plain
+    try {
+        // VERSIONE COMPATIBILE CON GOOGLE APP SCRIPT MODERNO
         await fetch(API, {
             method: "POST",
             mode: "no-cors",
-            headers: {"Content-Type": "text/plain"},
+            headers: { "Content-Type": "text/plain" },
             body: JSON.stringify(payload)
         });
 
-        // Anche se non ricevi risposta, il salvataggio è AVVENUTO
+        // Anche se non ricevi risposta, la presenza È SALVATA
         toast("Presenza salvata");
-        
-        // Aggiorna immediatamente lo storico
+
+        // Aggiorna lo storico
         setTimeout(caricaStorico, 800);
 
-    }catch(e){
+    } catch (e) {
         console.error(e);
         toast("Errore di rete");
     }
 }
-
 
 // ======================
 // CARICA STORICO
