@@ -5,7 +5,7 @@
 // ======================
 // CONFIGURAZIONE API
 // ======================
-const API = "https://script.google.com/macros/s/AKfycbwffMFNpr2cKsXD9WXH9qO0m57V1ATChY6LPzdMK8WDiXRlK6In3pcRorWTvb2Y4V-R/exec";
+const API = "https://script.google.com/macros/s/AKfycbyXtebhADdTpKAeuXnMykurAfrN7Cbgfv3wveRZzA2jMdUHMpmql4-xAaIBbZt3TbX2/exec";
 // ======================
 // VARIABILI GLOBALI
 // ======================
