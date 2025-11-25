@@ -6,13 +6,10 @@
 // CONFIGURAZIONE API
 // ======================
 const API = "https://script.google.com/macros/s/AKfycbwivHi5BILxEboZAjZAc3XpCAYKtLtFn1hr7KnGryx55lPGni_ZjhM4DumWm2e4Hnw6/exec";
-
-
 // ======================
 // VARIABILI GLOBALI
 // ======================
 let AUTISTA_LOGGATO = "";
-
 // ======================
 // TOAST
 // ======================
