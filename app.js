@@ -112,7 +112,7 @@ async function caricaTurni(){
 // ======================
 // SALVA PRESENZA (POST)
 // ======================
-async function salvaPresenza() {
+async function salvaPresenza(){
 
     let data = document.getElementById("dataPresenza").value;
     let tipo = document.getElementById("tipoPresenza").value;
@@ -120,45 +120,32 @@ async function salvaPresenza() {
     let o1   = document.getElementById("oraInizio").value;
     let o2   = document.getElementById("oraFine").value;
 
-    if (tipo === "Turno") {
+    if(tipo === "Turno"){
         desc = document.getElementById("turnoElenco").value;
     }
 
-    if (data === "" || tipo === "") {
+    if(data === "" || tipo === ""){
         toast("Compila data e tipo");
         return;
     }
 
-    const payload = {
-        action: "addPresenza",
-        nome: AUTISTA_LOGGATO,
-        data: data,
-        tipo: tipo,
-        desc: desc,
-        o1: o1,
-        o2: o2
-    };
+    // === COSTRUIAMO LA QUERY STRING ===
+    let url = `${API}?action=addPresenza`
+            + `&nome=${encodeURIComponent(AUTISTA_LOGGATO)}`
+            + `&data=${encodeURIComponent(data)}`
+            + `&tipo=${encodeURIComponent(tipo)}`
+            + `&desc=${encodeURIComponent(desc)}`
+            + `&o1=${encodeURIComponent(o1)}`
+            + `&o2=${encodeURIComponent(o2)}`;
 
-    try {
-        // VERSIONE COMPATIBILE CON GOOGLE APP SCRIPT MODERNO
-        await fetch(API, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify(payload)
-        });
+    try{
+        let res = await fetch(url);
+        let json = await res.json();
 
-        // Anche se non ricevi risposta, la presenza È SALVATA
-        toast("Presenza salvata");
-
-        // Aggiorna lo storico
-        setTimeout(caricaStorico, 800);
-
-    } catch (e) {
-        console.error(e);
-        toast("Errore di rete");
-    }
-}
+        if(json.status === "OK"){
+            toast("Presenza salvata!");
+        } else {
+            toast("Errore salvatag
 
 // ======================
 // CARICA STORICO
