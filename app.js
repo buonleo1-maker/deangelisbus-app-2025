@@ -121,7 +121,7 @@ async function salvaPresenza(){
     let o1   = document.getElementById("oraInizio").value;
     let o2   = document.getElementById("oraFine").value;
 
-    if(tipo === "Turno"){
+    if (tipo === "Turno"){
         desc = document.getElementById("turnoElenco").value;
     }
 
@@ -130,7 +130,7 @@ async function salvaPresenza(){
         return;
     }
 
-    // === COSTRUIAMO LA QUERY STRING ===
+    // === COSTRUZIONE URL GET ===
     let url = `${API}?action=addPresenza`
             + `&nome=${encodeURIComponent(AUTISTA_LOGGATO)}`
             + `&data=${encodeURIComponent(data)}`
@@ -146,7 +146,14 @@ async function salvaPresenza(){
         if(json.status === "OK"){
             toast("Presenza salvata!");
         } else {
-            toast("Errore salvatag
+            toast("Errore salvataggio");
+        }
+
+    } catch(e){
+        console.error(e);
+        toast("Errore di rete");
+    }
+}
 
 // ======================
 // CARICA STORICO
@@ -166,7 +173,6 @@ async function caricaStorico(){
         if(json.status === "OK" && json.data.length > 0){
 
             json.data.forEach(p => {
-
                 let div = document.createElement("div");
                 div.className = "storico-card";
 
@@ -185,7 +191,8 @@ async function caricaStorico(){
             container.innerHTML = "<p>Nessuna presenza registrata.</p>";
         }
 
-    }catch(e){
+    } catch(e){
+        console.error(e);
         container.innerHTML = "<p>Errore caricamento storico.</p>";
     }
 }
